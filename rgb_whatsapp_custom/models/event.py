@@ -8,6 +8,15 @@ class CalendarEvent(models.Model):
     phone = fields.Char(string='Phone', compute='_compute_phone', store=True)
     invitation_title = fields.Char(string='Invitation Title', default='تمت دعوتك الي ', store=True)
 
+    def send_whatsapp_invite(self):
+        self.ensure_one()
+        attendee = self.attendee_ids
+        if not attendee:
+            raise UserError("No attendees found for this event.")
+
+        for attendee in attendee:
+            attendee.send_whatsapp_invite()
+
     def send_whatsapp_reminder(self):
         for event in self:
             if event.phone:
@@ -71,7 +80,7 @@ class Attendee(models.Model):
         self.ensure_one()
         attendee = self
         template = self.env['whatsapp.template'].search(
-            [('template_name', '=', 'calendar'), ('status', '=', 'approved'), ('lang_code', '=', 'ar')], limit=1
+            [('template_name', '=', 'ar_invite'), ('status', '=', 'approved')], limit=1
         )
         if not template:
             return
@@ -83,15 +92,15 @@ class Attendee(models.Model):
             'phone': self.partner_id.phone or self.partner_id.mobile or '',  # Optional if template uses dynamic phone
             'free_text_1': attendee.partner_id.name,
             'free_text_2': attendee.event_id.name,
-            'free_text_3': attendee.event_id.start_date,
-            'free_text_4': attendee.event_id.start,
-            'free_text_5': attendee.event_id.videocall_location,
-            'free_text_6': attendee.event_id.invitation_title,
+            'free_text_3': attendee.event_id.start.date(),
+            'free_text_4': attendee.event_id.start.strftime('%H:%M'),
+            'free_text_5': attendee.event_id.videocall_location or '',
+            'free_text_6': attendee.event_id.invitation_title or '',
         })
         composer.action_send_whatsapp_template()
 
-    def create(self, vals):
-        res = super(Attendee, self).create(vals)
-        if res.event_id and res.event_id.start:
-            res.send_whatsapp_invite()
-        return res
+    # def create(self, vals):
+    #     res = super(Attendee, self).create(vals)
+    #     if res.event_id and res.event_id.start:
+    #         res.send_whatsapp_invite()
+    #     return res

@@ -25,42 +25,42 @@
                 (5, 0, 0),
                 (0, 0, {
                     'name': '{{1}}',
-                    'demo_value': 'محمد علي',
+                    'demo_value': '',
                     'line_type': 'body',
                     'field_type': 'field',
                     'field_name': 'partner_id'
                 }),
                 (0, 0, {
                     'name': '{{2}}',
-                    'demo_value': 'اجتماع فريق العمل',
+                    'demo_value': '',
                     'line_type': 'body',
                     'field_type': 'field',
                     'field_name': 'event_name'
                 }),
                 (0, 0, {
                     'name': '{{3}}',
-                    'demo_value': '13 أبريل 2025',
+                    'demo_value': '',
                     'line_type': 'body',
                     'field_type': 'field',
                     'field_name': 'event_start_date'
                 }),
                 (0, 0, {
                     'name': '{{4}}',
-                    'demo_value': '10:00 صباحًا',
+                    'demo_value': '',
                     'line_type': 'body',
                     'field_type': 'field',
                     'field_name': 'event_start_time'
                 }),
                 (0, 0, {
                     'name': '{{5}}',
-                    'demo_value': 'https://zoom.us/meeting123',
+                    'demo_value': '',
                     'line_type': 'body',
                     'field_type': 'field',
                     'field_name': 'event_video_link'
                 }),
                 (0, 0, {
                     'name': '{{6}}',
-                    'demo_value': 'Invitation to',
+                    'demo_value': '',
                     'line_type': 'body',
                     'field_type': 'field',
                     'field_name': 'event_id.invitation_title'
@@ -113,35 +113,35 @@
                 (5, 0, 0),
                 (0, 0, {
                     'name': '{{1}}',
-                    'demo_value': 'محمد علي',
+                    'demo_value': '',
                     'line_type': 'body',
                     'field_type': 'field',
                     'field_name': 'partner_id'
                 }),
                 (0, 0, {
                     'name': '{{2}}',
-                    'demo_value': 'اجتماع فريق العمل',
+                    'demo_value': '',
                     'line_type': 'body',
                     'field_type': 'field',
                     'field_name': 'event_name'
                 }),
                 (0, 0, {
                     'name': '{{3}}',
-                    'demo_value': '13 أبريل 2025',
+                    'demo_value': '',
                     'line_type': 'body',
                     'field_type': 'field',
                     'field_name': 'event_start_date'
                 }),
                 (0, 0, {
                     'name': '{{4}}',
-                    'demo_value': '10:00 صباحًا',
+                    'demo_value': '',
                     'line_type': 'body',
                     'field_type': 'field',
                     'field_name': 'event_start_time'
                 }),
                 (0, 0, {
                     'name': '{{5}}',
-                    'demo_value': 'https://zoom.us/meeting123',
+                    'demo_value': '',
                     'line_type': 'body',
                     'field_type': 'field',
                     'field_name': 'event_video_link'

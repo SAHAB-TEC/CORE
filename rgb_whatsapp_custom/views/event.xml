@@ -5,6 +5,12 @@
         <field name="model">calendar.event</field>
         <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
         <field name="arch" type="xml">
+
+            <xpath expr="//div[@class='oe_button_box']" position="inside">
+                <button name="send_whatsapp_invite" type="object" class="btn btn-primary"
+                        string="Send WhatsApp Invitation"/>
+            </xpath>
+
             <xpath expr="//field[@name='description']" position="after">
                 <field name="invitation_title"/>
             </xpath>
