@@ -1,5 +1,6 @@
 from odoo import api, fields, models
 from odoo.exceptions import UserError
+from odoo.tools import pytz
 
 
 class CalendarEvent(models.Model):
@@ -79,7 +80,7 @@ class Attendee(models.Model):
                 'free_text_1': attendee.partner_id.name,
                 'free_text_2': attendee.event_id.name,
                 'free_text_3': attendee.event_id.start.date(),
-                'free_text_4': attendee.event_id.start.strftime('%H:%M'),
+                'free_text_4': attendee.event_id.start.astimezone(pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%H:%M'),
                 'free_text_5': attendee.event_id.videocall_location,
             })
 
@@ -102,7 +103,7 @@ class Attendee(models.Model):
             'wa_template_id': template.id,
             'batch_mode': False,
             'phone': self.partner_id.phone or self.partner_id.mobile or '',  # Optional if template uses dynamic phone
-            'free_text_1': self.event_id.start,
+            'free_text_1': self.event_id.start.astimezone(pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%Y-%m-%d %H:%M'),
             'free_text_2': self.event_id.description,
         })
 
@@ -127,7 +128,7 @@ class Attendee(models.Model):
             'free_text_1': attendee.partner_id.name,
             'free_text_2': attendee.event_id.name,
             'free_text_3': attendee.event_id.start.date(),
-            'free_text_4': attendee.event_id.start.strftime('%H:%M'),
+            'free_text_4': attendee.event_id.start.astimezone(pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%H:%M'),
             'free_text_5': attendee.event_id.videocall_location or '',
             'free_text_6': attendee.event_id.invitation_title or '',
         })
