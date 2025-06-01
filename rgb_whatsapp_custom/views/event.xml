@@ -9,6 +9,8 @@
             <xpath expr="//div[@class='oe_button_box']" position="inside">
                 <button name="send_whatsapp_invite" type="object" class="btn btn-primary"
                         string="Send WhatsApp Invitation"/>
+                <button name="send_whatsapp_invite_min" type="object" class="btn btn-primary"
+                        string="Send Invitation Description"/>
             </xpath>
 
             <xpath expr="//field[@name='description']" position="after">

@@ -17,6 +17,15 @@ class CalendarEvent(models.Model):
         for attendee in attendee:
             attendee.send_whatsapp_invite()
 
+    def send_whatsapp_invite_min(self):
+        self.ensure_one()
+        attendee = self.attendee_ids
+        if not attendee:
+            raise UserError("No attendees found for this event.")
+
+        for attendee in attendee:
+            attendee.send_whatsapp_invite_min()
+
     def send_whatsapp_reminder(self):
         for event in self:
             if event.phone:
@@ -69,18 +78,43 @@ class Attendee(models.Model):
                 'phone': attendee.partner_id.phone or attendee.partner_id.mobile or '',  # Optional if template uses dynamic phone
                 'free_text_1': attendee.partner_id.name,
                 'free_text_2': attendee.event_id.name,
-                'free_text_3': attendee.event_id.start_date,
-                'free_text_4': attendee.event_id.start,
+                'free_text_3': attendee.event_id.start.date(),
+                'free_text_4': attendee.event_id.start.strftime('%H:%M'),
                 'free_text_5': attendee.event_id.videocall_location,
             })
 
             composer.action_send_whatsapp_template()
 
+    def send_whatsapp_invite_min(self):
+        self.ensure_one()
+        if not self.event_id:
+            raise UserError("No event associated with this attendee.")
+
+        template = self.env['whatsapp.template'].search(
+            [('template_name', '=', 'ar_event_details_reminder_min'), ('status', '=', 'approved')], limit=1
+        )
+
+        if not template:
+            raise UserError("No WhatsApp template found for sending invite.")
+        composer = self.env['whatsapp.composer'].create({
+            'res_model': 'calendar.attendee',
+            'res_ids': str(self.id),  # important: must be string, not list or int
+            'wa_template_id': template.id,
+            'batch_mode': False,
+            'phone': self.partner_id.phone or self.partner_id.mobile or '',  # Optional if template uses dynamic phone
+            'free_text_1': self.event_id.start,
+            'free_text_2': self.event_id.description,
+        })
+
+        composer.action_send_whatsapp_template()
+
+
+
     def send_whatsapp_invite(self):
         self.ensure_one()
         attendee = self
         template = self.env['whatsapp.template'].search(
-            [('template_name', '=', 'ar_invite'), ('status', '=', 'approved')], limit=1
+            [('template_name', '=', 'ar_event_details_reminder_new_1'), ('status', '=', 'approved')], limit=1
         )
         if not template:
             return
