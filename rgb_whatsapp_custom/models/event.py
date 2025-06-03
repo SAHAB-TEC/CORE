@@ -1,6 +1,6 @@
 from odoo import api, fields, models
 from odoo.exceptions import UserError
-from odoo.tools import pytz
+from odoo.tools import pytz, html2plaintext
 
 
 class CalendarEvent(models.Model):
@@ -127,7 +127,7 @@ class Attendee(models.Model):
             'batch_mode': False,
             'phone': self.partner_id.phone or self.partner_id.mobile or '',  # Optional if template uses dynamic phone
             'free_text_1': self.event_id.start.astimezone(pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%Y-%m-%d %H:%M'),
-            'free_text_2': self.event_id.description,
+            'free_text_2': html2plaintext(self.event_id.description or ''),
         })
 
         composer.action_send_whatsapp_template()
