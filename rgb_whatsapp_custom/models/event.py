@@ -86,13 +86,36 @@ class Attendee(models.Model):
 
             composer.action_send_whatsapp_template()
 
+    def cron_send_whatsapp_reminder_desc(self):
+        template = self.env['whatsapp.template'].search(
+            [('template_name', '=', 'beacon_invite_description_min'), ('status', '=', 'approved'), ('lang_code', '=', 'ar')], limit=1
+        ) # or specify manually
+
+        if not template:
+            raise UserError("No WhatsApp template found for Sale Order.")
+
+        all_attendees = self.env['calendar.attendee'].search([('event_id.start', '>=', fields.Datetime.now())])
+
+        for attendee in all_attendees:
+            composer = self.env['whatsapp.composer'].create({
+                'res_model': 'calendar.attendee',
+                'res_ids': str(attendee.id),  # important: must be string, not list or int
+                'wa_template_id': template.id,
+                'batch_mode': False,
+                'phone': attendee.partner_id.phone or attendee.partner_id.mobile or '',  # Optional if template uses dynamic phone
+                'free_text_1': attendee.partner_id.name,
+                'free_text_2': attendee.event_id.name,
+            })
+
+            composer.action_send_whatsapp_template()
+
     def send_whatsapp_invite_min(self):
         self.ensure_one()
         if not self.event_id:
             raise UserError("No event associated with this attendee.")
 
         template = self.env['whatsapp.template'].search(
-            [('template_name', '=', 'ar_event_details_reminder_min'), ('status', '=', 'approved')], limit=1
+            [('template_name', '=', 'beacon_invite_description_min'), ('status', '=', 'approved')], limit=1
         )
 
         if not template:
@@ -115,8 +138,11 @@ class Attendee(models.Model):
         self.ensure_one()
         attendee = self
         template = self.env['whatsapp.template'].search(
-            [('template_name', '=', 'ar_event_details_reminder_new_1'), ('status', '=', 'approved')], limit=1
+            [('template_name', '=', 'beacon_calender_invite_with_link'), ('status', '=', 'approved')], limit=1
         )
+        linke = ""
+        if attendee.event_id.videocall_location:
+            linke = "رابط الاجتماع : " + attendee.event_id.videocall_location
         if not template:
             return
         composer = self.env['whatsapp.composer'].create({
@@ -129,7 +155,7 @@ class Attendee(models.Model):
             'free_text_2': attendee.event_id.name,
             'free_text_3': attendee.event_id.start.date(),
             'free_text_4': attendee.event_id.start.astimezone(pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%H:%M'),
-            'free_text_5': attendee.event_id.videocall_location or '',
+            'free_text_5': linke,
             'free_text_6': attendee.event_id.invitation_title or '',
         })
         composer.action_send_whatsapp_template()

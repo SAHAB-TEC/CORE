@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
 
-        <record id="rgb_new_whatsapp_template_calendar" model="whatsapp.template" forcecreate="1">
-            <field name="name">RGB New Calendar Attendee</field>
-            <field name="template_name">rgb_new_calendar_attendee</field>
-            <field name="lang_code">ar</field>
-            <field name="template_type">utility</field>
-            <field name="header_type">none</field>
-            <field name="phone_field">phone</field>
-            <field name="model_id" ref="calendar.model_calendar_attendee"/>
-            <field name="body">
-مرحبًا {{1}},
+    <record id="rgb_new_whatsapp_template_calendar" model="whatsapp.template" forcecreate="1">
+        <field name="name">RGB New Calendar Attendee</field>
+        <field name="template_name">rgb_new_calendar_attendee</field>
+        <field name="lang_code">ar</field>
+        <field name="template_type">utility</field>
+        <field name="header_type">none</field>
+        <field name="phone_field">phone</field>
+        <field name="model_id" ref="calendar.model_calendar_attendee"/>
+        <field name="body">
+            مرحبًا {{1}},
 
-{{6}} "{{2}}" المقرر في {{3}}، في تمام الساعة {{4}}.
+            {{6}} "{{2}}" المقرر في {{3}}، في تمام الساعة {{4}}.
 
-يمكنك الانضمام إلى الاجتماع عبر الرابط التالي:
-{{5}}
+            يمكنك الانضمام إلى الاجتماع عبر الرابط التالي:
+            {{5}}
 
-إذا كنت بحاجة إلى أي مساعدة، فلا تتردد في الرد على هذه الرسالة.
-شكرًا لك!
-</field>
+            إذا كنت بحاجة إلى أي مساعدة، فلا تتردد في الرد على هذه الرسالة.
+            شكرًا لك!
+        </field>
 
-            <field name="variable_ids" eval="[
+        <field name="variable_ids" eval="[
                 (5, 0, 0),
                 (0, 0, {
                     'name': '{{1}}',
@@ -68,7 +68,7 @@
 
             ]"/>
 
-            <field name="button_ids" eval="[
+        <field name="button_ids" eval="[
                 (0, 0, {
                     'name': 'تأكيد الحضور',
                     'button_type': 'quick_reply'
@@ -82,34 +82,34 @@
                     'button_type': 'quick_reply'
                 })
             ]"/>
-        </record>
+    </record>
 
-        <record id="rgb_new_whatsapp_template_calendar_reminder" model="whatsapp.template" forcecreate="1">
-            <field name="name">RGB New Calendar Reminder</field>
-            <field name="template_name">rgb_new_calendar_reminder</field>
-            <field name="lang_code">ar</field>
-            <field name="template_type">utility</field>
-            <field name="header_type">none</field>
-            <field name="phone_field">phone</field>
-            <field name="model_id" ref="calendar.model_calendar_attendee"/>
-            <field name="body">
-                مرحبًا {{1}},
+    <record id="rgb_new_whatsapp_template_calendar_reminder" model="whatsapp.template" forcecreate="1">
+        <field name="name">RGB New Calendar Reminder</field>
+        <field name="template_name">rgb_new_calendar_reminder</field>
+        <field name="lang_code">ar</field>
+        <field name="template_type">utility</field>
+        <field name="header_type">none</field>
+        <field name="phone_field">phone</field>
+        <field name="model_id" ref="calendar.model_calendar_attendee"/>
+        <field name="body">
+            مرحبًا {{1}},
 
 
-                تذكير بموعد الاجتماع الخاص بك:
+            تذكير بموعد الاجتماع الخاص بك:
 
-                الاجتماع: {{2}}
+            الاجتماع: {{2}}
 
-                التاريخ: {{3}}
+            التاريخ: {{3}}
 
-                الوقت: {{4}}
+            الوقت: {{4}}
 
-                رابط الاجتماع: {{5}}
+            رابط الاجتماع: {{5}}
 
-                شكرًا لك!
-            </field>
+            شكرًا لك!
+        </field>
 
-            <field name="variable_ids" eval="[
+        <field name="variable_ids" eval="[
                 (5, 0, 0),
                 (0, 0, {
                     'name': '{{1}}',
@@ -147,7 +147,7 @@
                     'field_name': 'event_video_link'
                 })
             ]"/>
-            <field name="button_ids" eval="[
+        <field name="button_ids" eval="[
                 (0, 0, {
                     'name': 'تأكيد الحضور',
                     'button_type': 'quick_reply'
@@ -162,19 +162,30 @@
                 })
             ]"/>
 
-        </record>
+    </record>
 
 
-<!--    cron_send_whatsapp_reminder-->
-        <record id="rgb_new_whatsapp_template_calendar_cron_send_whatsapp_reminder" model="ir.cron">
-            <field name="name">RGB New Calendar Reminder</field>
-            <field name="model_id" ref="calendar.model_calendar_attendee"/>
-            <field name="state">code</field>
-            <field name="code">model.cron_send_whatsapp_reminder()</field>
-            <field name="interval_number">6</field>
-            <field name="interval_type">hours</field>
-            <field name="numbercall">-1</field>
-            <field name="doall" eval="False"/>
-        </record>
+    <!--    cron_send_whatsapp_reminder-->
+    <record id="rgb_new_whatsapp_template_calendar_cron_send_whatsapp_reminder" model="ir.cron">
+        <field name="name">Calendar Reminder</field>
+        <field name="model_id" ref="calendar.model_calendar_attendee"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_send_whatsapp_reminder()</field>
+        <field name="interval_number">6</field>
+        <field name="interval_type">hours</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+    </record>
+
+    <record id="rgb_new_whatsapp_template_calendar_cron_send_whatsapp_reminder_desc" model="ir.cron">
+        <field name="name">Calendar Reminder Description</field>
+        <field name="model_id" ref="calendar.model_calendar_attendee"/>
+        <field name="state">code</field>
+        <field name="code">model.send_whatsapp_invite_min()</field>
+        <field name="interval_number">6</field>
+        <field name="interval_type">hours</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+    </record>
 
 </odoo>
