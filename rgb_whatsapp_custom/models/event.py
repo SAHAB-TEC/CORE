@@ -141,7 +141,7 @@ class Attendee(models.Model):
             [('template_name', '=', 'beacon_calender_invite_with_link'), ('status', '=', 'approved')], limit=1
         )
         linke = ""
-        if attendee.event_id.videocall_location:
+        if attendee.event_id.videocall_location and attendee.event_id.videocall_location.startswith('https://'):
             linke = "رابط الاجتماع : " + attendee.event_id.videocall_location
         if not template:
             return
