@@ -140,7 +140,7 @@ class Attendee(models.Model):
         template = self.env['whatsapp.template'].search(
             [('template_name', '=', 'beacon_calender_invite_with_link'), ('status', '=', 'approved')], limit=1
         )
-        linke = ""
+        linke = "."
         if attendee.event_id.videocall_location and attendee.event_id.videocall_location.startswith('https://'):
             linke = "رابط الاجتماع : " + attendee.event_id.videocall_location
         if not template:
