@@ -19,4 +19,17 @@
         </field>
     </record>
 
+
+<!--    whatsapp.whatsapp_template_view_form inherit-->
+    <record id="view_whatsapp_template_form_inherit" model="ir.ui.view">
+        <field name="name">whatsapp.template.form.inherit</field>
+        <field name="model">whatsapp.template</field>
+        <field name="inherit_id" ref="whatsapp.whatsapp_template_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='template_type']" position="after">
+                <field name="is_calender_event"/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

@@ -138,7 +138,7 @@ class Attendee(models.Model):
         self.ensure_one()
         attendee = self
         template = self.env['whatsapp.template'].search(
-            [('template_name', '=', 'beacon_calender_invite_with_link'), ('status', '=', 'approved')], limit=1
+            [('is_calender_event', '=', True), ('status', '=', 'approved')], limit=1
         )
         linke = "."
         if attendee.event_id.videocall_location and attendee.event_id.videocall_location.startswith('https://'):
@@ -157,6 +157,7 @@ class Attendee(models.Model):
             'free_text_4': attendee.event_id.start.astimezone(pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%H:%M'),
             'free_text_5': linke,
             'free_text_6': attendee.event_id.invitation_title or '',
+            'free_text_7': attendee.event_id.description or '',
         })
         composer.action_send_whatsapp_template()
 
