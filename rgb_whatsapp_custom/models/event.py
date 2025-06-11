@@ -62,7 +62,7 @@ class Attendee(models.Model):
 
     def cron_send_whatsapp_reminder(self):
         template = self.env['whatsapp.template'].search(
-            [('template_name', '=', 'calendar_event_reminder'), ('status', '=', 'approved'), ('lang_code', '=', 'ar')], limit=1
+            [('template_name', '=', 'beacon_calendar_event_reminder'), ('status', '=', 'approved'), ('lang_code', '=', 'ar')], limit=1
         ) # or specify manually
 
         if not template:
