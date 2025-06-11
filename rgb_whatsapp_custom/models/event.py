@@ -126,8 +126,9 @@ class Attendee(models.Model):
             'wa_template_id': template.id,
             'batch_mode': False,
             'phone': self.partner_id.phone or self.partner_id.mobile or '',  # Optional if template uses dynamic phone
-            'free_text_1': self.event_id.start.astimezone(pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%Y-%m-%d %H:%M'),
-            'free_text_2': html2plaintext(self.event_id.description or ''),
+            'free_text_1': self.event_id.start.astimezone(pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%Y-%m-%d'),
+            'free_text_2': self.event_id.start.astimezone(pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%H:%M'),
+            'free_text_3': html2plaintext(self.event_id.description or ''),
         })
 
         composer.action_send_whatsapp_template()
