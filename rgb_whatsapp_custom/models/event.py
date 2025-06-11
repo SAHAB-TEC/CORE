@@ -157,7 +157,7 @@ class Attendee(models.Model):
             'free_text_4': attendee.event_id.start.astimezone(pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%H:%M'),
             'free_text_5': linke,
             'free_text_6': attendee.event_id.invitation_title or '',
-            'free_text_7': attendee.event_id.description or '',
+            'free_text_7': html2plaintext(attendee.event_id.description or ''),
         })
         composer.action_send_whatsapp_template()
 
