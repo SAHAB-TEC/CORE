@@ -62,6 +62,7 @@ class WhatsappAccount(models.Model):
                 _logger.info("Received button message: %s", messages['button'].get('payload'))
                 if messages['button'].get('payload') in ['ايقاف','ايقاف '] or messages['button'].get('payload').contains('ايقاف'):
                     # stop receiving messages
+                    _logger.info("Stop : %s", messages['button'].get('payload'))
                     sender_partner = self.env['res.partner'].sudo().search(['|',('mobile', '=', sender_mobile),('phone', '=', sender_mobile)], limit=1)
                     attendee_id = channel.attendee_id
                     if attendee_id and sender_partner:
