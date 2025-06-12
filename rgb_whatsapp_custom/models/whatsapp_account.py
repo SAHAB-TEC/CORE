@@ -65,7 +65,10 @@ class WhatsappAccount(models.Model):
                     _logger.info("Stop : %s", messages['button'].get('payload'))
                     sender_partner = self.env['res.partner'].sudo().search(['|',('mobile', '=', sender_mobile),('phone', '=', sender_mobile)], limit=1)
                     attendee_id = channel.attendee_id
+                    _logger.info("Attendee ID: %s", attendee_id)
+                    _logger.info("Sender Partner: %s", sender_partner)
                     if attendee_id and sender_partner:
+                        _logger.info("Attendee Type: %s", channel.attenee_type)
                         if channel.attenee_type == 'reminder':
                             attendee_id.sudo().write({
                                 'stop_reminder': True,
