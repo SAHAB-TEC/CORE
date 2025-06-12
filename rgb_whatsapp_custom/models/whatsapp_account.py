@@ -67,7 +67,7 @@ class WhatsappAccount(models.Model):
                     attendee_id = channel.attendee_id
                     _logger.info("Attendee ID: %s", attendee_id)
                     _logger.info("Sender Partner: %s", sender_partner)
-                    if attendee_id and sender_partner:
+                    if attendee_id:
                         _logger.info("Attendee Type: %s", channel.attenee_type)
                         if channel.attenee_type == 'reminder':
                             attendee_id.sudo().write({
