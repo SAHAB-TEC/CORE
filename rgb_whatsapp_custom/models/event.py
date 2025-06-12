@@ -38,8 +38,6 @@ class CalendarEvent(models.Model):
             else:
                 print("No phone number available for this event.")
 
-
-
     @api.depends('partner_ids')
     def _compute_phone(self):
         for event in self:
@@ -48,6 +46,17 @@ class CalendarEvent(models.Model):
                 phone = event.partner_ids[0].phone
             event.phone = phone
 
+class DiscussChannel(models.Model):
+    _inherit = 'discuss.channel'
+
+    is_whatsapp_calender = fields.Boolean(string='Is WhatsApp Calendar', default=False, help="Indicates if this channel is used for WhatsApp calendar events.")
+    attendee_id = fields.Many2one('calendar.attendee', string='Attendee', help="Reference to the calendar attendee associated with this channel.")
+    attenee_type = fields.Selection([
+        ('reminder', 'Reminder'),
+        ('reminder_desc', 'Reminder Description'),
+        ('invite_min', 'Invite Min'),
+        ('invite', 'Invite')
+    ], string='Attendee Type', help="Type of attendee for this channel, used to differentiate between reminders and invites.")
 
 class Attendee(models.Model):
     _inherit = 'calendar.attendee'
@@ -58,17 +67,20 @@ class Attendee(models.Model):
     event_location = fields.Char(related='event_id.location', store=True)
     event_video_link = fields.Char(related='event_id.videocall_location', store=True)
     event_description = fields.Html(related='event_id.description', store=True)
-
+    stop_reminder = fields.Boolean(string='Stop Reminder', default=False, help="If checked, this attendee will not receive reminders.")
+    stop_reminder_desc = fields.Boolean(string='Stop Reminder Description', default=False, help="If checked, this attendee will not receive reminder descriptions.")
+    is_invited = fields.Boolean(string='Is Invited', default=False, help="Indicates if this attendee is invited to the event.")
+    is_invited_min = fields.Boolean(string='Is Invited Min', default=False, help="Indicates if this attendee is invited with minimal information.")
 
     def cron_send_whatsapp_reminder(self):
         template = self.env['whatsapp.template'].search(
-            [('template_name', '=', 'beacon_calendar_event_reminder'), ('status', '=', 'approved'), ('lang_code', '=', 'ar')], limit=1
+            [('template_name', '=', 'beacon_calendar_event_reminder'), ('status', '=', 'approved')], limit=1
         ) # or specify manually
 
         if not template:
             raise UserError("No WhatsApp template found for Sale Order.")
 
-        all_attendees = self.env['calendar.attendee'].search([('event_id.start', '>=', fields.Datetime.now())])
+        all_attendees = self.env['calendar.attendee'].search([('event_id.start', '>=', fields.Datetime.now()), ('stop_reminder', '=', False), ('is_invited', '=', True)])
 
         for attendee in all_attendees:
             linke = "."
@@ -87,21 +99,29 @@ class Attendee(models.Model):
                 'free_text_2': attendee.event_id.name,
                 'free_text_3': attendee.event_id.start.date(),
                 'free_text_4': attendee.event_id.start.astimezone(
-                    pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%H:%M'),
+                    pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%h:%M'),
                 'free_text_5': linke,
                 'free_text_6': html2plaintext(attendee.event_id.description or ''),
             })
-            composer.action_send_whatsapp_template()
+            message = composer.action_send_whatsapp_template()
+            channel = message.channel_id
+            if channel:
+                channel.write({
+                    'name': f"WhatsApp Reminder: {attendee.event_id.name}",
+                    'is_whatsapp_calender': True,
+                    'attendee_id': attendee.id,
+                    'attenee_type': 'reminder',
+                })
 
     def cron_send_whatsapp_reminder_desc(self):
         template = self.env['whatsapp.template'].search(
-            [('template_name', '=', 'beacon_invite_description_min'), ('status', '=', 'approved'), ('lang_code', '=', 'ar')], limit=1
+            [('template_name', '=', 'beacon_reminder_description_min'), ('status', '=', 'approved'), ('lang_code', '=', 'ar')], limit=1
         ) # or specify manually
 
         if not template:
             raise UserError("No WhatsApp template found for Sale Order.")
 
-        all_attendees = self.env['calendar.attendee'].search([('event_id.start', '>=', fields.Datetime.now())])
+        all_attendees = self.env['calendar.attendee'].search([('event_id.start', '>=', fields.Datetime.now()), ('stop_reminder_desc', '=', False), ('is_invited_min', '=', True)])
 
         for attendee in all_attendees:
             composer = self.env['whatsapp.composer'].create({
@@ -114,7 +134,15 @@ class Attendee(models.Model):
                 'free_text_2': attendee.event_id.name,
             })
 
-            composer.action_send_whatsapp_template()
+            message = composer.action_send_whatsapp_template()
+            channel = message.channel_id
+            if channel:
+                channel.write({
+                    'name': f"WhatsApp Reminder: {attendee.event_id.name}",
+                    'is_whatsapp_calender': True,
+                    'attendee_id': attendee.id,
+                    'attenee_type': 'reminder_desc',
+                })
 
     def send_whatsapp_invite_min(self):
         self.ensure_one()
@@ -138,9 +166,16 @@ class Attendee(models.Model):
             'free_text_3': html2plaintext(self.event_id.description or ''),
         })
 
-        composer.action_send_whatsapp_template()
-
-
+        message = composer.action_send_whatsapp_template()
+        self.is_invited_min = True
+        channel = message.channel_id
+        if channel:
+            channel.write({
+                'name': f"WhatsApp Reminder: {self.event_id.name}",
+                'is_whatsapp_calender': True,
+                'attendee_id': self.id,
+                'attenee_type': 'invite_min',
+            })
 
     def send_whatsapp_invite(self):
         self.ensure_one()
@@ -167,10 +202,13 @@ class Attendee(models.Model):
             'free_text_6': attendee.event_id.invitation_title or '',
             'free_text_7': html2plaintext(attendee.event_id.description or ''),
         })
-        composer.action_send_whatsapp_template()
-
-    # def create(self, vals):
-    #     res = super(Attendee, self).create(vals)
-    #     if res.event_id and res.event_id.start:
-    #         res.send_whatsapp_invite()
-    #     return res
+        self.is_invited = True
+        message = composer.action_send_whatsapp_template()
+        channel = message.channel_id
+        if channel:
+            channel.write({
+                'name': f"WhatsApp Reminder: {attendee.event_id.name}",
+                'is_whatsapp_calender': True,
+                'attendee_id': attendee.id,
+                'attenee_type': 'invite',
+            })
