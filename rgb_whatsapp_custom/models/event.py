@@ -104,7 +104,7 @@ class Attendee(models.Model):
                 'free_text_6': html2plaintext(attendee.event_id.description or ''),
             })
             message = composer.action_send_whatsapp_template()
-            channel = message.channel_id
+            channel = message.mail_message_id.channel_id
             if channel:
                 channel.write({
                     'name': f"WhatsApp Reminder: {attendee.event_id.name}",
@@ -135,7 +135,7 @@ class Attendee(models.Model):
             })
 
             message = composer.action_send_whatsapp_template()
-            channel = message.channel_id
+            channel = message.mail_message_id.channel_id
             if channel:
                 channel.write({
                     'name': f"WhatsApp Reminder: {attendee.event_id.name}",
@@ -168,7 +168,7 @@ class Attendee(models.Model):
 
         message = composer.action_send_whatsapp_template()
         self.is_invited_min = True
-        channel = message.channel_id
+        channel = message.mail_message_id.channel_id
         if channel:
             channel.write({
                 'name': f"WhatsApp Reminder: {self.event_id.name}",
@@ -204,7 +204,7 @@ class Attendee(models.Model):
         })
         self.is_invited = True
         message = composer.action_send_whatsapp_template()
-        channel = message.channel_id
+        channel = message.mail_message_id.channel_id
         if channel:
             channel.write({
                 'name': f"WhatsApp Reminder: {attendee.event_id.name}",
