@@ -221,7 +221,7 @@ class Attendee(models.Model):
             'free_text_2': attendee.event_id.name,
             'free_text_3': attendee.event_id.start.date(),
             'free_text_4': attendee.event_id.start.astimezone(
-                pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%h:%M'),
+                pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%H:%M'),
             'free_text_5': linke,
             'free_text_6': html2plaintext(attendee.event_id.description or ''),
         })
