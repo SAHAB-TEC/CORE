@@ -60,7 +60,9 @@ class WhatsappAccount(models.Model):
 
             if messages.get('button'):
                 _logger.info("Received button message: %s", messages['button'].get('payload'))
-                if messages['button'].get('payload') in ['ايقاف','ايقاف '] or messages['button'].get('payload').contains('ايقاف'):
+                if (messages['button'].get('payload') in ['ايقاف','ايقاف ']
+                        or "ايقاف" in messages['button'].get('payload')
+                        or "stop" in messages['button'].get('payload').lower()):
                     # stop receiving messages
                     _logger.info("Stop : %s", messages['button'].get('payload'))
                     sender_partner = self.env['res.partner'].sudo().search(['|',('mobile', '=', sender_mobile),('phone', '=', sender_mobile)], limit=1)

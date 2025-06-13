@@ -165,12 +165,12 @@
     </record>
 
 
-    <!--    cron_send_whatsapp_reminder-->
+    <!--    send_whatsapp_reminder-->
     <record id="rgb_new_whatsapp_template_calendar_cron_send_whatsapp_reminder" model="ir.cron">
         <field name="name">Calendar Reminder</field>
         <field name="model_id" ref="calendar.model_calendar_attendee"/>
         <field name="state">code</field>
-        <field name="code">model.cron_send_whatsapp_reminder()</field>
+        <field name="code">model.send_whatsapp_reminder()</field>
         <field name="interval_number">6</field>
         <field name="interval_type">hours</field>
         <field name="numbercall">-1</field>
@@ -181,7 +181,7 @@
         <field name="name">Calendar Reminder Description</field>
         <field name="model_id" ref="calendar.model_calendar_attendee"/>
         <field name="state">code</field>
-        <field name="code">model.send_whatsapp_invite_min()</field>
+        <field name="code">model.send_whatsapp_invite_description()</field>
         <field name="interval_number">6</field>
         <field name="interval_type">hours</field>
         <field name="numbercall">-1</field>

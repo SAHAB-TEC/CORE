@@ -26,7 +26,7 @@ class AlarmManager(models.AbstractModel):
             invited_attendees = self.env['calendar.attendee'].search([('event_id', '=', event.id), ('stop_reminder', '=', False), ('is_invited', '=', True)])
 
             for attendee in invited_min_attendees:
-                attendee.cron_send_whatsapp_reminder_desc()
+                attendee.send_whatsapp_reminder_description()
 
             for attendee in invited_attendees:
-                attendee.cron_send_whatsapp_reminder()
+                attendee.send_whatsapp_reminder_one()
