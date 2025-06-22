@@ -80,6 +80,29 @@ class WhatsappAccount(models.Model):
                                 'stop_reminder_desc': True,
                             })
 
+                # "تأكيد" or "confirm" in messages['button'].get('payload').lower():
+                if (messages['button'].get('payload') in ['تأكيد', 'تأكيد ']
+                        or "تأكيد" in messages['button'].get('payload')
+                        or "confirm" in messages['button'].get('payload').lower()):
+                    sender_partner = self.env['res.partner'].sudo().search(['|', ('mobile', '=', sender_mobile), ('phone', '=', sender_mobile)], limit=1)
+                    attendee_id = channel.attendee_id
+                    if attendee_id:
+                        _logger.info("Attendee Type: %s", channel.attenee_type)
+                        attendee_id.sudo().do_accept()
+                    else:
+                        _logger.info("there is no attendee_id for this channel: %s", channel.id)
+
+
+                if (messages['button'].get('payload') in ['الغاء', 'الغاء ']
+                        or "الغاء" in messages['button'].get('payload')
+                        or "cancel" in messages['button'].get('payload').lower()):
+                    sender_partner = self.env['res.partner'].sudo().search(['|', ('mobile', '=', sender_mobile), ('phone', '=', sender_mobile)], limit=1)
+                    attendee_id = channel.attendee_id
+                    if attendee_id:
+                        _logger.info("Attendee Type: %s", channel.attenee_type)
+                        attendee_id.sudo().do_decline()
+                    else:
+                        _logger.info("there is no attendee_id for this channel: %s", channel.id)
 
             if message_type == 'text':
                 kwargs['body'] = plaintext2html(messages['text']['body'])
