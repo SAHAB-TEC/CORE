@@ -108,7 +108,7 @@ class Attendee(models.Model):
             'free_text_7': html2plaintext(attendee.event_id.description or ''),
         })
         self.is_invited = True
-        message = composer.action_send_whatsapp_template()
+        message = composer.sudo().action_send_whatsapp_template()
         channel = message.wa_account_id._find_active_channel(message.mobile_number_formatted)
         if channel:
             channel.write({
@@ -141,7 +141,7 @@ class Attendee(models.Model):
             'free_text_3': html2plaintext(self.event_id.description or ''),
         })
 
-        message = composer.action_send_whatsapp_template()
+        message = composer.sudo().action_send_whatsapp_template()
         self.is_invited_min = True
         channel = message.wa_account_id._find_active_channel(message.mobile_number_formatted)
         if channel:
@@ -184,7 +184,7 @@ class Attendee(models.Model):
                 'free_text_5': linke,
                 'free_text_6': html2plaintext(attendee.event_id.description or ''),
             })
-            message = composer.action_send_whatsapp_template()
+            message = composer.sudo().action_send_whatsapp_template()
             channel = message.wa_account_id._find_active_channel(message.mobile_number_formatted)
             if channel:
                 channel.write({
@@ -225,7 +225,7 @@ class Attendee(models.Model):
             'free_text_5': linke,
             'free_text_6': html2plaintext(attendee.event_id.description or ''),
         })
-        message = composer.action_send_whatsapp_template()
+        message = composer.sudo().action_send_whatsapp_template()
         channel = message.wa_account_id._find_active_channel(message.mobile_number_formatted)
         if channel:
             channel.write({
@@ -262,7 +262,7 @@ class Attendee(models.Model):
                 'free_text_3': html2plaintext(self.event_id.description or ''),
             })
 
-            message = composer.action_send_whatsapp_template()
+            message = composer.sudo().action_send_whatsapp_template()
             channel = message.wa_account_id._find_active_channel(message.mobile_number_formatted)
             if channel:
                 channel.write({
@@ -298,7 +298,7 @@ class Attendee(models.Model):
             'free_text_3': html2plaintext(self.event_id.description or ''),
         })
 
-        message = composer.action_send_whatsapp_template()
+        message = composer.sudo().action_send_whatsapp_template()
         channel = message.wa_account_id._find_active_channel(message.mobile_number_formatted)
         if channel:
             channel.write({
