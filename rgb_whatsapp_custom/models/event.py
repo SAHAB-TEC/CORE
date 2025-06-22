@@ -102,7 +102,7 @@ class Attendee(models.Model):
             'free_text_2': attendee.event_id.name,
             'free_text_3': attendee.event_id.start.date(),
             'free_text_4': attendee.event_id.start.astimezone(
-                pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%H:%M'),
+                pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%I:%M %p'),
             'free_text_5': linke,
             'free_text_6': attendee.event_id.invitation_title or '',
             'free_text_7': html2plaintext(attendee.event_id.description or ''),
@@ -137,7 +137,7 @@ class Attendee(models.Model):
             'free_text_1': self.event_id.start.astimezone(pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime(
                 '%Y-%m-%d'),
             'free_text_2': self.event_id.start.astimezone(pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime(
-                '%H:%M'),
+                '%I:%M %p'),
             'free_text_3': html2plaintext(self.event_id.description or ''),
         })
 
@@ -180,7 +180,7 @@ class Attendee(models.Model):
                 'free_text_2': attendee.event_id.name,
                 'free_text_3': attendee.event_id.start.date(),
                 'free_text_4': attendee.event_id.start.astimezone(
-                    pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%h:%M'),
+                    pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%I:%M %p'),
                 'free_text_5': linke,
                 'free_text_6': html2plaintext(attendee.event_id.description or ''),
             })
@@ -221,7 +221,7 @@ class Attendee(models.Model):
             'free_text_2': attendee.event_id.name,
             'free_text_3': attendee.event_id.start.date(),
             'free_text_4': attendee.event_id.start.astimezone(
-                pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%H:%M'),
+                pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%I:%M %p'),
             'free_text_5': linke,
             'free_text_6': html2plaintext(attendee.event_id.description or ''),
         })
@@ -258,7 +258,7 @@ class Attendee(models.Model):
                 'free_text_1': self.event_id.start.astimezone(
                     pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%Y-%m-%d'),
                 'free_text_2': self.event_id.start.astimezone(
-                    pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%H:%M'),
+                    pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%I:%M %p'),
                 'free_text_3': html2plaintext(self.event_id.description or ''),
             })
 
@@ -294,7 +294,7 @@ class Attendee(models.Model):
             'free_text_1': self.event_id.start.astimezone(
                 pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%Y-%m-%d'),
             'free_text_2': self.event_id.start.astimezone(
-                pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%H:%M'),
+                pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%I:%M %p'),
             'free_text_3': html2plaintext(self.event_id.description or ''),
         })
 
