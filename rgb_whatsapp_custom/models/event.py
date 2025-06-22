@@ -1,6 +1,9 @@
 from odoo import api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import pytz, html2plaintext
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class CalendarEvent(models.Model):
@@ -109,14 +112,18 @@ class Attendee(models.Model):
         })
         self.is_invited = True
         message = composer.sudo().action_send_whatsapp_template()
-        channel = message.wa_account_id[:1]._find_active_channel(message.mobile_number_formatted)
-        if channel:
-            channel.write({
-                'name': f"WhatsApp Reminder: {attendee.event_id.name}",
-                'is_whatsapp_calender': True,
-                'attendee_id': attendee.id,
-                'attenee_type': 'invite',
-            })
+        wa_account = message.wa_account_id[:1]
+        if wa_account:
+            channel = wa_account._find_active_channel(message.mobile_number_formatted)
+            if channel:
+                channel.write({
+                    'name': f"WhatsApp Reminder: {attendee.event_id.name}",
+                    'is_whatsapp_calender': True,
+                    'attendee_id': attendee.id,
+                    'attenee_type': 'invite',
+                })
+        else:
+            _logger.warning("No WhatsApp Account found for message ID %s", message.id)
     def send_whatsapp_invite_description(self):
         self.ensure_one()
         if not self.event_id:
@@ -143,14 +150,18 @@ class Attendee(models.Model):
 
         message = composer.sudo().action_send_whatsapp_template()
         self.is_invited_min = True
-        channel = message.wa_account_id[:1]._find_active_channel(message.mobile_number_formatted)
-        if channel:
-            channel.write({
-                'name': f"WhatsApp Reminder: {self.event_id.name}",
-                'is_whatsapp_calender': True,
-                'attendee_id': self.id,
-                'attenee_type': 'invite_min',
-            })
+        wa_account = message.wa_account_id[:1]
+        if wa_account:
+            channel = wa_account._find_active_channel(message.mobile_number_formatted)
+            if channel:
+                channel.write({
+                    'name': f"WhatsApp Reminder: {self.event_id.name}",
+                    'is_whatsapp_calender': True,
+                    'attendee_id': self.id,
+                    'attenee_type': 'invite',
+                })
+        else:
+            _logger.warning("No WhatsApp Account found for message ID %s", message.id)
 
     def send_whatsapp_reminder(self):
         template = self.env['whatsapp.template'].search(
@@ -185,14 +196,18 @@ class Attendee(models.Model):
                 'free_text_6': html2plaintext(attendee.event_id.description or ''),
             })
             message = composer.sudo().action_send_whatsapp_template()
-            channel = message.wa_account_id[:1]._find_active_channel(message.mobile_number_formatted)
-            if channel:
-                channel.write({
-                    'name': f"WhatsApp Reminder: {attendee.event_id.name}",
-                    'is_whatsapp_calender': True,
-                    'attendee_id': attendee.id,
-                    'attenee_type': 'reminder',
-                })
+            wa_account = message.wa_account_id[:1]
+            if wa_account:
+                channel = wa_account._find_active_channel(message.mobile_number_formatted)
+                if channel:
+                    channel.write({
+                        'name': f"WhatsApp Reminder: {attendee.event_id.name}",
+                        'is_whatsapp_calender': True,
+                        'attendee_id': attendee.id,
+                        'attenee_type': 'invite',
+                    })
+            else:
+                _logger.warning("No WhatsApp Account found for message ID %s", message.id)
 
     def send_whatsapp_reminder_one(self):
         self.ensure_one()
@@ -226,14 +241,18 @@ class Attendee(models.Model):
             'free_text_6': html2plaintext(attendee.event_id.description or ''),
         })
         message = composer.sudo().action_send_whatsapp_template()
-        channel = message.wa_account_id[:1]._find_active_channel(message.mobile_number_formatted)
-        if channel:
-            channel.write({
-                'name': f"WhatsApp Reminder: {attendee.event_id.name}",
-                'is_whatsapp_calender': True,
-                'attendee_id': attendee.id,
-                'attenee_type': 'reminder',
-            })
+        wa_account = message.wa_account_id[:1]
+        if wa_account:
+            channel = wa_account._find_active_channel(message.mobile_number_formatted)
+            if channel:
+                channel.write({
+                    'name': f"WhatsApp Reminder: {attendee.event_id.name}",
+                    'is_whatsapp_calender': True,
+                    'attendee_id': attendee.id,
+                    'attenee_type': 'invite',
+                })
+        else:
+            _logger.warning("No WhatsApp Account found for message ID %s", message.id)
     def send_whatsapp_reminder_description(self):
         template = self.env['whatsapp.template'].search(
             [('template_name', '=', 'reminder_description'), ('status', '=', 'approved'),
@@ -263,14 +282,18 @@ class Attendee(models.Model):
             })
 
             message = composer.sudo().action_send_whatsapp_template()
-            channel = message.wa_account_id[:1]._find_active_channel(message.mobile_number_formatted)
-            if channel:
-                channel.write({
-                    'name': f"WhatsApp Reminder: {attendee.event_id.name}",
-                    'is_whatsapp_calender': True,
-                    'attendee_id': attendee.id,
-                    'attenee_type': 'reminder_desc',
-                })
+            wa_account = message.wa_account_id[:1]
+            if wa_account:
+                channel = wa_account._find_active_channel(message.mobile_number_formatted)
+                if channel:
+                    channel.write({
+                        'name': f"WhatsApp Reminder: {attendee.event_id.name}",
+                        'is_whatsapp_calender': True,
+                        'attendee_id': attendee.id,
+                        'attenee_type': 'invite',
+                    })
+            else:
+                _logger.warning("No WhatsApp Account found for message ID %s", message.id)
 
     def send_whatsapp_reminder_description_one(self):
         self.ensure_one()
@@ -299,11 +322,15 @@ class Attendee(models.Model):
         })
 
         message = composer.sudo().action_send_whatsapp_template()
-        channel = message.wa_account_id[:1]._find_active_channel(message.mobile_number_formatted)
-        if channel:
-            channel.write({
-                'name': f"WhatsApp Reminder: {attendee.event_id.name}",
-                'is_whatsapp_calender': True,
-                'attendee_id': attendee.id,
-                'attenee_type': 'reminder_desc',
-            })
+        wa_account = message.wa_account_id[:1]
+        if wa_account:
+            channel = wa_account._find_active_channel(message.mobile_number_formatted)
+            if channel:
+                channel.write({
+                    'name': f"WhatsApp Reminder: {attendee.event_id.name}",
+                    'is_whatsapp_calender': True,
+                    'attendee_id': attendee.id,
+                    'attenee_type': 'invite',
+                })
+        else:
+            _logger.warning("No WhatsApp Account found for message ID %s", message.id)
