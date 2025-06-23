@@ -16,6 +16,10 @@
             <xpath expr="//field[@name='description']" position="after">
                 <field name="invitation_title"/>
             </xpath>
+
+            <xpath expr="//field[@name='alarm_ids']" position="after">
+                <field name="reminder_hours_ids" widget="many2many_tags"/>
+            </xpath>
         </field>
     </record>
 

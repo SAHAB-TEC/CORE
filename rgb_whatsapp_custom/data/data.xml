@@ -1,5 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
+<record model="reminders.hours" id="reminders_hours_12_am">
+        <field name="name">12:00 AM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_1_am">
+        <field name="name">1:00 AM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_2_am">
+        <field name="name">2:00 AM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_3_am">
+        <field name="name">3:00 AM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_4_am">
+        <field name="name">4:00 AM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_5_am">
+        <field name="name">5:00 AM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_6_am">
+        <field name="name">6:00 AM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_7_am">
+        <field name="name">7:00 AM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_8_am">
+        <field name="name">8:00 AM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_9_am">
+        <field name="name">9:00 AM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_10_am">
+        <field name="name">10:00 AM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_11_am">
+        <field name="name">11:00 AM</field>
+    </record>
+
+    <record model="reminders.hours" id="reminders_hours_12_pm">
+        <field name="name">12:00 PM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_1_pm">
+        <field name="name">1:00 PM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_2_pm">
+        <field name="name">2:00 PM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_3_pm">
+        <field name="name">3:00 PM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_4_pm">
+        <field name="name">4:00 PM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_5_pm">
+        <field name="name">5:00 PM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_6_pm">
+        <field name="name">6:00 PM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_7_pm">
+        <field name="name">7:00 PM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_8_pm">
+        <field name="name">8:00 PM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_9_pm">
+        <field name="name">9:00 PM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_10_pm">
+        <field name="name">10:00 PM</field>
+    </record>
+    <record model="reminders.hours" id="reminders_hours_11_pm">
+        <field name="name">11:00 PM</field>
+    </record>
+
 
     <record id="rgb_new_whatsapp_template_calendar" model="whatsapp.template" forcecreate="1">
         <field name="name">RGB New Calendar Attendee</field>
@@ -186,6 +260,30 @@
         <field name="interval_type">hours</field>
         <field name="numbercall">-1</field>
         <field name="doall" eval="False"/>
+    </record>
+
+        <!-- Cron 1: Reminder to Event Invitees -->
+    <record id="ir_cron_reminder_to_invitees" model="ir.cron">
+        <field name="name">Reminder: Event Invitees</field>
+        <field name="model_id" ref="calendar.model_calendar_event"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_reminder_to_invitees()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Cron 2: Reminder from Description -->
+    <record id="ir_cron_reminder_from_description" model="ir.cron">
+        <field name="name">Reminder: Event Description</field>
+        <field name="model_id" ref="calendar.model_calendar_event"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_reminder_from_description()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
     </record>
 
 </odoo>

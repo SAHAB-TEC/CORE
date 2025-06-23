@@ -1,9 +1,19 @@
+from datetime import datetime, timedelta
+
 from odoo import api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import pytz, html2plaintext
 import logging
 
+
+
 _logger = logging.getLogger(__name__)
+
+class RemindersHours(models.Model):
+    _name = 'reminders.hours'
+    _description = 'Reminders Hours'
+
+    name = fields.Char(string='Reminder Time', required=True)
 
 
 class CalendarEvent(models.Model):
@@ -11,6 +21,10 @@ class CalendarEvent(models.Model):
 
     phone = fields.Char(string='Phone', compute='_compute_phone', store=True)
     invitation_title = fields.Char(string='Invitation Title', default='تمت دعوتك الي ', store=True)
+
+    # reminders field selection with multi select contains from 01:00 AM to 12:00 PM
+    reminder_hours_ids = fields.Many2many('reminders.hours')
+
 
     def send_whatsapp_invite(self):
         self.ensure_one()
@@ -49,6 +63,29 @@ class CalendarEvent(models.Model):
                 phone = event.partner_ids[0].phone
             event.phone = phone
 
+    def _get_current_hour_label(self):
+        """Return current hour in 12-hour format with AM/PM"""
+        return datetime.now().replace(minute=0,second=0).strftime('%-I:00 %p')
+
+    @api.model
+    def cron_reminder_to_invitees(self):
+        """Send reminder to event invitees matching the current hour"""
+        hour_label = self._get_current_hour_label()
+        matching_events = self.search([('start', '<', datetime.now())])
+        for event in matching_events:
+            if hour_label in event.reminder_hours_ids.mapped('name'):
+                for invitee in event.attendee_ids.filtered(lambda a: not a.stop_reminder and a.is_invited and a.state != 'declined'):
+                    invitee.send_whatsapp_reminder_one()
+
+    @api.model
+    def cron_reminder_from_description(self):
+        """Send reminder based on event description matching the current hour"""
+        hour_label = self._get_current_hour_label()
+        events = self.search([('start', '<', datetime.now())])
+        for event in events:
+            if hour_label in event.reminder_hours_ids.mapped('name'):
+                for invitee in event.attendee_ids.filtered(lambda a: not a.stop_reminder_desc and a.is_invited_min and a.state != 'declined'):
+                    invitee.send_whatsapp_reminder_description_one()
 
 class DiscussChannel(models.Model):
     _inherit = 'discuss.channel'
@@ -90,7 +127,7 @@ class Attendee(models.Model):
         template = self.env['whatsapp.template'].search(
             [('is_calender_event', '=', True), ('status', '=', 'approved')], limit=1
         )
-        linke = ""
+        linke = " "
         if attendee.event_id.videocall_location and attendee.event_id.videocall_location.startswith('https://'):
             linke = "رابط الاجتماع : " + attendee.event_id.videocall_location
         if not template:
@@ -107,8 +144,8 @@ class Attendee(models.Model):
             'free_text_4': attendee.event_id.start.astimezone(
                 pytz.timezone(self.env.context.get('tz') or 'UTC')).strftime('%I:%M %p'),
             'free_text_5': linke,
-            'free_text_6': attendee.event_id.invitation_title or '',
-            'free_text_7': html2plaintext(attendee.event_id.description or ''),
+            'free_text_6': html2plaintext(attendee.event_id.description or ''),
+            'free_text_7': attendee.event_id.invitation_title or '',
         })
         self.is_invited = True
         message = composer.sudo().action_send_whatsapp_template()
