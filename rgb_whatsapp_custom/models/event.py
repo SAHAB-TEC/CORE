@@ -149,9 +149,9 @@ class Attendee(models.Model):
         })
         self.is_invited = True
         message = composer.sudo().action_send_whatsapp_template()
-        wa_account = message.wa_account_id[:1]
+        wa_account = message.sudo().wa_account_id[:1]
         if wa_account:
-            channel = wa_account._find_active_channel(message.mobile_number_formatted)
+            channel = wa_account.sudo()._find_active_channel(message.mobile_number_formatted)
             if channel:
                 channel.write({
                     'name': f"WhatsApp Reminder: {attendee.event_id.name}",
@@ -187,9 +187,9 @@ class Attendee(models.Model):
 
         message = composer.sudo().action_send_whatsapp_template()
         self.is_invited_min = True
-        wa_account = message.wa_account_id[:1]
+        wa_account = message.sudo().wa_account_id[:1]
         if wa_account:
-            channel = wa_account._find_active_channel(message.mobile_number_formatted)
+            channel = wa_account.sudo()._find_active_channel(message.mobile_number_formatted)
             if channel:
                 channel.write({
                     'name': f"WhatsApp Reminder: {self.event_id.name}",
@@ -233,9 +233,9 @@ class Attendee(models.Model):
                 'free_text_6': html2plaintext(attendee.event_id.description or ''),
             })
             message = composer.sudo().action_send_whatsapp_template()
-            wa_account = message.wa_account_id[:1]
+            wa_account = message.sudo().wa_account_id[:1]
             if wa_account:
-                channel = wa_account._find_active_channel(message.mobile_number_formatted)
+                channel = wa_account.sudo()._find_active_channel(message.mobile_number_formatted)
                 if channel:
                     channel.write({
                         'name': f"WhatsApp Reminder: {attendee.event_id.name}",
@@ -278,11 +278,11 @@ class Attendee(models.Model):
             'free_text_6': html2plaintext(attendee.event_id.description or ''),
         })
         message = composer.sudo().action_send_whatsapp_template()
-        wa_account = message.wa_account_id[:1]
+        wa_account = message.sudo().wa_account_id[:1]
         if wa_account:
-            channel = wa_account._find_active_channel(message.mobile_number_formatted)
+            channel = wa_account.sudo()._find_active_channel(message.mobile_number_formatted)
             if channel:
-                channel.write({
+                channel.sudo().write({
                     'name': f"WhatsApp Reminder: {attendee.event_id.name}",
                     'is_whatsapp_calender': True,
                     'attendee_id': attendee.id,

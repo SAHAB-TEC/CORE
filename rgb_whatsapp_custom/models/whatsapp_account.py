@@ -91,6 +91,9 @@ class WhatsappAccount(models.Model):
                         attendee_id.sudo().do_accept()
                     else:
                         _logger.info("there is no attendee_id for this channel: %s", channel.id)
+                        # get attendee
+                        attendee_id = self.env['calendar.attendee'].sudo().search([('partner_id', '=', sender_partner.id), ('event_id', '=', channel.event_id.id)], limit=1)
+
 
 
                 if (messages['button'].get('payload') in ['الغاء', 'الغاء ']
