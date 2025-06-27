@@ -92,7 +92,7 @@ class WhatsappAccount(models.Model):
                     else:
                         _logger.info("there is no attendee_id for this channel: %s", channel.id)
                         # get attendee
-                        attendee_id = self.env['calendar.attendee'].sudo().search([('partner_id', '=', sender_partner.id), ('event_id', '=', channel.event_id.id)], limit=1)
+                        # attendee_id = self.env['calendar.attendee'].sudo().search([('partner_id', '=', sender_partner.id), ('event_id', '=', channel.event_id.id)], limit=1)
 
 
 
