@@ -65,13 +65,20 @@ class CalendarEvent(models.Model):
 
     def _get_current_hour_label(self):
         """Return current hour in 12-hour format with AM/PM"""
-        current_hour = datetime.now().replace(minute=0,second=0).strftime('%-I:00 %p')
-        _logger.warning("Current hour label: %s", current_hour)
-        current_local_hour = pytz.timezone(self.env.context.get('tz') or 'UTC').localize(datetime.now()).strftime('%-I:00 %p')
+        tz_name = self.env.context.get('tz') or self.env.user.tz or 'Africa/Tripoli'
+        user_tz = pytz.timezone(tz_name)
+
+        # Get UTC now as a timezone-aware datetime
+        utc_now = datetime.now(pytz.utc)
+
+        # Convert UTC time to user local time
+        local_now = utc_now.astimezone(user_tz)
+
+        current_local_hour = local_now.replace(minute=0, second=0, microsecond=0).strftime('%-I:00 %p')
+        _logger.warning("User timezone: %s", user_tz)
         _logger.warning("Current local hour label: %s", current_local_hour)
-        current_utc_hour = datetime.now(pytz.utc).strftime('%-I:00 %p')
-        _logger.warning("Current UTC hour label: %s", current_utc_hour)
-        return current_local_hour if current_local_hour else current_hour
+
+        return current_local_hour
 
     @api.model
     def cron_reminder_to_invitees(self):
