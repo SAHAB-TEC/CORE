@@ -71,7 +71,9 @@ class CalendarEvent(models.Model):
     def cron_reminder_to_invitees(self):
         """Send reminder to event invitees matching the current hour"""
         hour_label = self._get_current_hour_label()
-        matching_events = self.search([('start', '<', datetime.now())])
+        _logger.warning("Current hour label for reminder: %s", hour_label)
+        matching_events = self.search([('start', '>', datetime.now())])
+        _logger.warning("Found %d events for reminder", len(matching_events))
         for event in matching_events:
             if hour_label in event.reminder_hours_ids.mapped('name'):
                 for invitee in event.attendee_ids.filtered(lambda a: not a.stop_reminder and a.is_invited and a.state != 'declined'):
